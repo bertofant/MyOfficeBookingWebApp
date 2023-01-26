@@ -1,0 +1,16 @@
+cookie:
+  expiry_days: 30
+  key: webapp_presenze_key
+  name: webapp_presenze_name
+credentials:
+  usernames:
+    grob76:
+      email: grob76@gmail.com
+      name: Sebastian Bertoni
+      password: $2b$12$8dvSHvVgq0fQ9aumEDgKX.BatFTVOYKQlg8yAy6PRO39YHNeC0hFe
+    rfant:
+      email: roberto.fantini@telecomitalia.it
+      name: Roberto Fantini
+      password: $2b$12$I8IMZ9t.10Q1jtaL6RNR7u3ZctJmaWwYtL6gqUuBqKkBIVJK5JtMm
+preauthorized:
+  emails: null
