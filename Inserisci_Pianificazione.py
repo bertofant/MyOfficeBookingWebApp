@@ -128,5 +128,3 @@ elif authentication_status==False:
 elif authentication_status==None:
     formRegistrazione()
 
-
-st.session_state
