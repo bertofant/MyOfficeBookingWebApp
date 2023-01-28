@@ -4,13 +4,17 @@ cookie:
   name: webapp_presenze_name
 credentials:
   usernames:
-    grob76:
-      email: grob76@gmail.com
-      name: Sebastian Bertoni
-      password: $2b$12$8dvSHvVgq0fQ9aumEDgKX.BatFTVOYKQlg8yAy6PRO39YHNeC0hFe
-    rfant:
-      email: roberto.fantini@telecomitalia.it
+    luca@gmail.com:
+      email: luca@gmail.com
+      name: Luca
+      password: $2b$12$gGluhJSE9xbORayqXG5ixu92MpiSPP36Iw7f8Cpm5csm5orDq3d1u
+    marco@gmail.com:
+      email: marco@gmail.com
+      name: Marco
+      password: $2b$12$kN7TmQCe8MA/OeHDTiLvde.8ahETmp8s2KRfevPML9MLrZWOHGkuW
+    roberto.fantini@gmail.com:
+      email: roberto.fantini@gmail.com
       name: Roberto Fantini
-      password: $2b$12$I8IMZ9t.10Q1jtaL6RNR7u3ZctJmaWwYtL6gqUuBqKkBIVJK5JtMm
+      password: $2b$12$8dvSHvVgq0fQ9aumEDgKX.BatFTVOYKQlg8yAy6PRO39YHNeC0hFe
 preauthorized:
   emails: null

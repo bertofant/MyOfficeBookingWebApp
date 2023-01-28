@@ -5,6 +5,20 @@ import yaml
 from yaml import SafeLoader
 from datetime import datetime, timedelta
 
+def formRegistrazione():
+    with st.expander('Nuovo utente? Registrati qui', expanded=st.session_state['registerExpanded']):
+        try:
+            if authenticator.register_user('Registrazione Nuovo Utente', location='main', preauthorization=False):
+                st.session_state['successoRegistrazione'] = True
+                st.session_state['RegisterExpanded'] = False
+                with open('./users.yaml', 'w') as file:
+                    yaml.dump(config, file, default_flow_style=False)
+                st.experimental_rerun()
+            
+        except Exception as e:
+            st.error(e)
+
+
 date_obj = datetime.today()
 start_of_thisweek = date_obj - timedelta(days=date_obj.weekday())  # This Monday
 end_of_thisweek = start_of_thisweek + timedelta(days=4)  # This Friday
@@ -55,8 +69,10 @@ authenticator = stauth.MyAuthenticate(
 if st.session_state['successoRegistrazione']:
     st.success('Utente registrato con successo. Effettua il login')
     st.session_state['successoRegistrazione'] = False
+    st.session_state['authentication_status'] = None
 
 name, authentication_status, username = authenticator.login('Login', 'main')
+
 if authentication_status==True:
     authenticator.logout('Logout', 'sidebar')
     st.session_state['sidebarState'] = 'expanded'
@@ -107,18 +123,10 @@ if authentication_status==True:
     _,_,_,_,_,col = st.columns((3,1,1,1,1,1))
     col.button('Salva', on_click=registraDati)
 elif authentication_status==False:
-    st.error('Username/password is incorrect')    
+    st.error('Email o password non corretti')
+    formRegistrazione()    
 elif authentication_status==None:
-    with st.expander('Nuovo utente? Registrati qui', expanded=st.session_state['registerExpanded']):
-        try:
-            if authenticator.register_user('Registrazione Nuovo Utente', location='main', preauthorization=False):
-                st.session_state['successoRegistrazione'] = True
-                st.session_state['RegisterExpanded'] = False
-                with open('./users.yaml', 'w') as file:
-                    yaml.dump(config, file, default_flow_style=False)
-                st.experimental_rerun()
-            
-        except Exception as e:
-            st.error(e)
+    formRegistrazione()
 
 
+st.session_state

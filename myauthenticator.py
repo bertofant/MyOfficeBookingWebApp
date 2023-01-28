@@ -2,6 +2,14 @@ import streamlit as st
 from streamlit_authenticator import Authenticate
 from streamlit_authenticator.exceptions import RegisterError
 from datetime import datetime, timedelta
+import re
+
+def check_email(s):
+    pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+    if re.match(pat,s):
+        return True
+    else:
+        return False
 
 class MyAuthenticate(Authenticate):
     def __init__(self, credentials: dict, cookie_name: str, key: str, cookie_expiry_days: int = 30, preauthorized: list = None):
@@ -50,8 +58,13 @@ class MyAuthenticate(Authenticate):
         new_password = register_user_form.text_input('Password', type='password')
         new_password_repeat = register_user_form.text_input('Ripeti la password', type='password')
 
+        
+
+
         if register_user_form.form_submit_button('Registrati'):
-            if len(new_email) and len(new_username) and len(new_name) and len(new_password) > 0:
+            if not check_email(new_email):
+                raise RegisterError('La mail inserita non è in un formato corretto')
+            elif len(new_email) and len(new_username) and len(new_name) and len(new_password) > 0:
                 if new_username not in self.credentials['usernames'] and not self.find_name_in_credentials(new_name):
                     if new_password == new_password_repeat:
                         if preauthorization:
@@ -59,7 +72,7 @@ class MyAuthenticate(Authenticate):
                                 self._register_credentials(new_username, new_name, new_password, new_email, preauthorization)
                                 return True
                             else:
-                                raise RegisterError('User not pre-authorized to register')
+                                raise RegisterError('Utente non autorizzato alla registrazione')
                         else:
                             self._register_credentials(new_username, new_name, new_password, new_email, preauthorization)
                             return True
@@ -70,7 +83,6 @@ class MyAuthenticate(Authenticate):
                         raise RegisterError('Email già utilizzata')
                     elif self.find_name_in_credentials(new_name):
                         raise RegisterError('Nome per la pianificazione già utilizzato')
-
             else:
                 raise RegisterError('Inserire email, nome e password')
 

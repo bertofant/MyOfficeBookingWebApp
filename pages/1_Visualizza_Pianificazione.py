@@ -4,6 +4,7 @@ import pandas as pd
 import yaml
 from yaml import SafeLoader
 from datetime import datetime, timedelta
+from Inserisci_Pianificazione import formRegistrazione
 
 date_obj = datetime.today()
 start_of_thisweek = date_obj - timedelta(days=date_obj.weekday())  # This Monday
@@ -106,19 +107,10 @@ if authentication_status==True:
 
 
 elif authentication_status==False:
-    st.error('Username/password is incorrect')
+    st.error('Email o password non corretti')
+    formRegistrazione()
 elif authentication_status==None:
-    with st.expander('Nuovo utente? Registrati qui', expanded=st.session_state['registerExpanded']):
-        try:
-            if authenticator.register_user('Register user', location='main', preauthorization=False):
-                st.session_state['successoRegistrazione'] = True
-                st.session_state['RegisterExpanded'] = False
-                with open('./users.yaml', 'w') as file:
-                    yaml.dump(config, file, default_flow_style=False)
-                st.experimental_rerun()
-            
-        except Exception as e:
-            st.error(e)
+    formRegistrazione()
 
 #st.session_state
 
