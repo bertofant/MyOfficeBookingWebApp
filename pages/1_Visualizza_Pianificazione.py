@@ -3,42 +3,13 @@ import myauthenticator as stauth
 import pandas as pd
 import yaml
 from yaml import SafeLoader
+from datetime import datetime, timedelta
 
-##### Define styles for HTML dataframe rendering
-th_props = [
-  ('font-size', '14px'),
-  ('text-align', 'left'),
-  ('font-weight', 'bold'),
-  ('color', '#6d6d6d'),
-  ('background-color', '#eeeeef'),
-  ('border','1px solid #eeeeef'),
-  #('padding','12px 35px')
-]
-
-td_props = [
-  ('font-size', '14px'),
-  ('text-align', 'center'),
-]
-
-cell_hover_props = [  # for row hover use <tr> instead of <td>
-    ('background-color', '#eeeeef')
-]
-
-headers_props = [
-    ('text-align','center'),
-    ('font-size','1.1em')
-]
-#dict(selector='th:not(.index_name)',props=headers_props)
-
-styles = [
-    dict(selector="th", props=th_props),
-    dict(selector="td", props=td_props),
-    dict(selector="tr:hover",props=cell_hover_props),
-    dict(selector='th.col_heading',props=headers_props),
-    dict(selector='th.col_heading.level0',props=headers_props),
-    dict(selector='th.col_heading.level1',props=td_props)
-]
-#####
+date_obj = datetime.today()
+start_of_thisweek = date_obj - timedelta(days=date_obj.weekday())  # This Monday
+end_of_thisweek = start_of_thisweek + timedelta(days=4)  # This Friday
+start_of_nextweek = start_of_thisweek + timedelta(days=7) # Next Monday
+end_of_nextweek = start_of_nextweek + timedelta(days=4) # Next Friday
 
 def build_table(df_week):
     header  = "|   |Lunedì  | Martedì | Mercoledì | Giovedì | Venerdì |"
@@ -64,14 +35,18 @@ header_style = '''
         th{
             background-color: rgb(240, 242, 246);
         }
-    .css-a51556 {
-        border-bottom: 1px solid rgba(49, 51, 63, 0.1);
-        border-right: 1px solid rgba(49, 51, 63, 0.1);
-        vertical-align: middle;
-        padding: 0.25rem 0.375rem;
-        font-weight: 400;
-        color: rgba(49, 51, 63);
-    }
+        .css-a51556 {
+            border-bottom: 1px solid rgba(49, 51, 63, 0.1);
+            border-right: 1px solid rgba(49, 51, 63, 0.1);
+            vertical-align: middle;
+            padding: 0.25rem 0.375rem;
+            font-weight: 400;
+            color: rgba(49, 51, 63);
+        }
+
+        tr:hover{
+            background-color: rgba(0, 104, 201, 0.1);
+        }
 
     </style>
 '''
@@ -118,18 +93,17 @@ if authentication_status==True:
     df_nextweek.columns = days
 
     st.subheader('Pianificazione settimana corrente')
-    st.table(df_thisweek)
+    st.write(f' Settimana da lunedì {start_of_thisweek.strftime( "%d/%m/%y")} a venerdì {end_of_thisweek.strftime("%d/%m/%y")}')
+    #st.table(df_thisweek)
     st.markdown(header_style+build_table(df_thisweek),unsafe_allow_html=True)
-    st.markdown(df_thisweek.style.set_table_styles(styles).to_html(),unsafe_allow_html=True)
+
+    st.markdown('<br>',unsafe_allow_html=True)
 
     st.subheader('Pianificazione settimana prossima')
-    st.table(df_nextweek)
+    st.write(f'Settimana da lunedì { start_of_nextweek.strftime("%d/%m/%y")} a venerdì {end_of_nextweek.strftime("%d/%m/%y")}')
+    #st.table(df_nextweek)
     st.markdown(header_style+build_table(df_nextweek),unsafe_allow_html=True)
-    st.markdown(df_nextweek.style.set_table_styles(styles).to_html(),unsafe_allow_html=True)
-    df=df_nextweek.style.set_table_styles(styles,overwrite=False).set_properties(**{'text-align':'center'})
-    st.table(df)
-    df=df_nextweek.style.set_table_styles(styles)
-    st.table(df)
+
 
 elif authentication_status==False:
     st.error('Username/password is incorrect')
@@ -146,5 +120,5 @@ elif authentication_status==None:
         except Exception as e:
             st.error(e)
 
-st.session_state
+#st.session_state
 

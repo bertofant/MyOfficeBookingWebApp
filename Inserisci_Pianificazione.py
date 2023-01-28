@@ -3,7 +3,13 @@ import myauthenticator as stauth
 import pandas as pd
 import yaml
 from yaml import SafeLoader
+from datetime import datetime, timedelta
 
+date_obj = datetime.today()
+start_of_thisweek = date_obj - timedelta(days=date_obj.weekday())  # This Monday
+end_of_thisweek = start_of_thisweek + timedelta(days=4)  # This Friday
+start_of_nextweek = start_of_thisweek + timedelta(days=7) # Next Monday
+end_of_nextweek = start_of_nextweek + timedelta(days=4) # Next Friday
 
 if 'registerExpanded' not in st.session_state:
     st.session_state['registerExpanded'] = False
@@ -61,7 +67,7 @@ if authentication_status==True:
 
 
     with thisweek:
-        st.write('La tua pianificazione di questa settimana.')
+        st.write(f'La tua pianificazione di questa settimana, da lunedì {start_of_thisweek.strftime( "%d/%m/%y")} a venerdì {end_of_thisweek.strftime("%d/%m/%y")}')
         st.write('Spunta i giorni in cui sarai in ufficio:')
         name1, mon1, tue1, wed1, thur1, fri1 =st.columns((3,1,1,1,1,1))
 
@@ -80,7 +86,7 @@ if authentication_status==True:
 
 
     with nextweek:
-        st.write('La tua pianificazione della settimana prossima.')
+        st.write(f'La tua pianificazione della settimana prossima, da lunedì {start_of_nextweek.strftime( "%d/%m/%y")} a venerdì {end_of_nextweek.strftime("%d/%m/%y")}')
         st.write('Spunta i giorni in cui sarai in ufficio:')
         name2, mon2, tue2, wed2, thur2, fri2 =st.columns((3,1,1,1,1,1))
         days2 = (mon2, tue2, wed2, thur2,fri2)
