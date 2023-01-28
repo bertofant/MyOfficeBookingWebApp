@@ -88,11 +88,8 @@ if authentication_status==True:
     df_presenze=pd.read_csv('presenzeUtenti.csv',index_col=0)
     days=['Lun', 'Mar', 'Mer', 'Gio', 'Ven']
     df_thisweek=df_presenze.loc[:,'Lun1':'Ven1']
-    df_thisweek.columns = days
-
     df_nextweek=df_presenze.loc[:,'Lun2':'Ven2']
-    df_nextweek.columns = days
-
+ 
     st.subheader('Pianificazione settimana corrente')
     st.write(f' Settimana da lunedì {start_of_thisweek.strftime( "%d/%m/%y")} a venerdì {end_of_thisweek.strftime("%d/%m/%y")}')
     #st.table(df_thisweek)

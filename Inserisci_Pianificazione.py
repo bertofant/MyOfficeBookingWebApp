@@ -48,11 +48,9 @@ def registraDati():
         df_presenze=pd.read_csv('presenzeUtenti.csv',index_col=0)
     except:
         df_presenze=pd.DataFrame(columns=daykeys)
-        print(df_presenze)
     df_presenze.loc[utente['nome'],:] = " "
     for day in utente['presenze']:
         df_presenze.loc[utente['nome'],day]="X"
-    print(df_presenze)
     df_presenze.to_csv('presenzeUtenti.csv')
 
 with open('./users.yaml') as file:
@@ -81,6 +79,13 @@ if authentication_status==True:
     dayname = ('Lun','Mar','Mer','Gio','Ven')
     daykeys = ('Lun1','Mar1','Mer1','Gio1','Ven1','Lun2','Mar2','Mer2','Gio2','Ven2')
 
+    try:
+        df_presenze=pd.read_csv('presenzeUtenti.csv',index_col=0)
+        df_thisweek=df_presenze.loc[:,'Lun1':'Ven1']
+        df_nextweek=df_presenze.loc[:,'Lun2':'Ven2']
+    except:
+        pass
+
 
     with thisweek:
         st.write(f'La tua pianificazione di questa settimana, da lunedì {start_of_thisweek.strftime( "%d/%m/%y")} a venerdì {end_of_thisweek.strftime("%d/%m/%y")}')
@@ -89,16 +94,24 @@ if authentication_status==True:
 
         days1 = (mon1, tue1, wed1, thur1,fri1)
         daykey1 = daykeys[:5]
+        nome = st.session_state['name']
+        stato_prenotazioni = stato_prenotazioni=[False]*5
+        try:
+            if nome in df_thisweek.index:
+                prenotazioni = df_thisweek.loc[nome,:].values.tolist()
+                stato_prenotazioni = [True if prenot =='X' else False for prenot in prenotazioni]
+        except:
+            pass
 
         with name1:
-            st.text_input(label="Inserisci il tuo nome",label_visibility='hidden',value=st.session_state['name'], key= 'nominativo1', disabled=True)
+            st.text_input(label="Inserisci il tuo nome",label_visibility='hidden',value=nome, key= 'nominativo1', disabled=True)
         for i,day in enumerate(days1):
             with day:
                 st.write(f"{dayname[i]}")
                 if dayname[i]=='Ven':
-                    st.checkbox(label=dayname[i],key=daykey1[i],disabled=True,label_visibility='hidden')
+                    st.checkbox(label=dayname[i],key=daykey1[i],value=stato_prenotazioni[i],disabled=True,label_visibility='hidden')
                 else:
-                    st.checkbox(label=dayname[i],key=daykey1[i],label_visibility='hidden')
+                    st.checkbox(label=dayname[i],key=daykey1[i],value=stato_prenotazioni[i],label_visibility='hidden')
 
 
     with nextweek:
@@ -107,7 +120,14 @@ if authentication_status==True:
         name2, mon2, tue2, wed2, thur2, fri2 =st.columns((3,1,1,1,1,1))
         days2 = (mon2, tue2, wed2, thur2,fri2)
         daykey2 = daykeys[5:]
-
+        nome = st.session_state['name']
+        stato_prenotazioni=[False]*5
+        try:
+            if nome in df_nextweek.index:
+                prenotazioni = df_nextweek.loc[nome,:].values.tolist()
+                stato_prenotazioni = [True if prenot =='X' else False for prenot in prenotazioni]
+        except:
+            pass
 
         with name2:
             st.text_input(label="Il tuo nome",label_visibility='hidden',value=st.session_state.nominativo1, key= 'nominativo2', disabled=True)
@@ -115,9 +135,10 @@ if authentication_status==True:
             with day:
                 st.write(f"{dayname[i]}")
                 if dayname[i]=='Ven':
-                    st.checkbox(label=dayname[i],key=daykey2[i],disabled=True, label_visibility='hidden')
+                    st.checkbox(label=dayname[i],key=daykey2[i],value=stato_prenotazioni[i],disabled=True, label_visibility='hidden')
                 else:
-                    st.checkbox(label=dayname[i],key=daykey2[i],label_visibility='hidden')
+                    st.checkbox(label=dayname[i],key=daykey2[i],value=stato_prenotazioni[i],label_visibility='hidden')
+
 
 
     _,_,_,_,_,col = st.columns((3,1,1,1,1,1))
