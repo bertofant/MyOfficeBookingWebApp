@@ -6,6 +6,19 @@ from yaml import SafeLoader
 from datetime import datetime, timedelta
 from Inserisci_Pianificazione import formRegistrazione
 
+
+if 'sidebarState' not in st.session_state or st.session_state["authentication_status"]==None:
+    st.session_state['sidebarState'] = 'collapsed'
+
+st.set_page_config(page_title="Visualizza la Pianificazione",initial_sidebar_state=st.session_state['sidebarState'])
+
+if 'registerExpanded' not in st.session_state:
+    st.session_state['registerExpanded'] = False
+
+if 'successoRegistrazione' not in st.session_state:
+    st.session_state['successoRegistrazione'] = False
+
+
 date_obj = datetime.today()
 start_of_thisweek = date_obj - timedelta(days=date_obj.weekday())  # This Monday
 end_of_thisweek = start_of_thisweek + timedelta(days=4)  # This Friday
@@ -52,18 +65,6 @@ header_style = '''
     </style>
 '''
 
-
-if 'registerExpanded' not in st.session_state:
-    st.session_state['registerExpanded'] = False
-
-if 'successoRegistrazione' not in st.session_state:
-    st.session_state['successoRegistrazione'] = False
-
-if 'sidebarState' not in st.session_state or st.session_state["authentication_status"]==None:
-    st.session_state['sidebarState'] = 'collapsed'
-
-
-st.set_page_config(page_title="Visualizza la Pianificazione",initial_sidebar_state=st.session_state['sidebarState'])
 with open('./users.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
