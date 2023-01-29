@@ -34,6 +34,9 @@ if 'successoRegistrazione' not in st.session_state:
 if 'sidebarState' not in st.session_state or st.session_state["authentication_status"]==None:
     st.session_state['sidebarState'] = 'collapsed'
 
+if 'datiInseriti' not in st.session_state:
+    st.session_state['datiInseriti'] = False
+
 
 st.set_page_config(page_title="Inserisci la tua Pianificazione",initial_sidebar_state=st.session_state['sidebarState'])
 
@@ -52,6 +55,7 @@ def registraDati():
     for day in utente['presenze']:
         df_presenze.loc[utente['nome'],day]="X"
     df_presenze.to_csv('presenzeUtenti.csv')
+    st.session_state['datiInseriti'] = True
 
 with open('./users.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
@@ -95,7 +99,7 @@ if authentication_status==True:
         days1 = (mon1, tue1, wed1, thur1,fri1)
         daykey1 = daykeys[:5]
         nome = st.session_state['name']
-        stato_prenotazioni = stato_prenotazioni=[False]*5
+        stato_prenotazioni=[False]*5
         try:
             if nome in df_thisweek.index:
                 prenotazioni = df_thisweek.loc[nome,:].values.tolist()
@@ -143,6 +147,10 @@ if authentication_status==True:
 
     _,_,_,_,_,col = st.columns((3,1,1,1,1,1))
     col.button('Salva', on_click=registraDati)
+    if st.session_state['datiInseriti']:
+        st.success('Dati inseriti correttamente')
+        st.session_state['datiInseriti'] = False
+        
 elif authentication_status==False:
     st.error('Email o password non corretti')
     formRegistrazione()    
