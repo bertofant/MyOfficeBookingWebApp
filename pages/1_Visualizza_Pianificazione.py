@@ -5,6 +5,9 @@ import yaml
 from yaml import SafeLoader
 from datetime import datetime, timedelta
 from Inserisci_Pianificazione import formRegistrazione
+from fileingithub import push_to_repo_branch,read_file_in_github,read_csv_in_github
+from githubcredentials import GITHUBTOKEN,GTIHUBUSER,GITHUBREPO,CSVGITHUBPATH,YAMLGITHUBPATH
+
 
 
 if 'sidebarState' not in st.session_state or st.session_state["authentication_status"]==None:
@@ -65,8 +68,8 @@ header_style = '''
     </style>
 '''
 
-with open('./users.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+data = read_file_in_github(YAMLGITHUBPATH,GTIHUBUSER,GITHUBTOKEN)
+config = yaml.safe_load(data)
 
 authenticator = stauth.MyAuthenticate(
     config['credentials'],
@@ -86,7 +89,7 @@ if authentication_status==True:
     authenticator.logout('Logout', 'sidebar')
     st.session_state['sidebarState'] = 'expanded'
 
-    df_presenze=pd.read_csv('presenzeUtenti.csv',index_col=0)
+    df_presenze=read_csv_in_github(CSVGITHUBPATH,GTIHUBUSER,GITHUBTOKEN,index_col=0)
     days=['Lun', 'Mar', 'Mer', 'Gio', 'Ven']
     df_thisweek=df_presenze.loc[:,'Lun1':'Ven1']
     df_nextweek=df_presenze.loc[:,'Lun2':'Ven2']

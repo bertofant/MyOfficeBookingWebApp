@@ -4,6 +4,8 @@ import pandas as pd
 import yaml
 from yaml import SafeLoader
 from datetime import datetime, timedelta
+from fileingithub import push_to_repo_branch,read_file_in_github,read_csv_in_github
+from githubcredentials import GITHUBTOKEN,GTIHUBUSER,GITHUBREPO,CSVGITHUBPATH,YAMLGITHUBPATH
 
 def formRegistrazione():
     with st.expander('Nuovo utente? Registrati qui', expanded=st.session_state['registerExpanded']):
@@ -13,6 +15,7 @@ def formRegistrazione():
                 st.session_state['RegisterExpanded'] = False
                 with open('./users.yaml', 'w') as file:
                     yaml.dump(config, file, default_flow_style=False)
+                push_to_repo_branch('users.yaml', f'{GTIHUBUSER}/{GITHUBREPO}', 'master', GTIHUBUSER,GITHUBTOKEN)
                 st.experimental_rerun()
             
         except Exception as e:
@@ -48,17 +51,18 @@ def registraDati():
         if st.session_state[days]:
             utente['presenze'].append(days)
     try:
-        df_presenze=pd.read_csv('presenzeUtenti.csv',index_col=0)
+        df_presenze=read_csv_in_github(CSVGITHUBPATH,GTIHUBUSER,GITHUBTOKEN,index_col=0)
     except:
         df_presenze=pd.DataFrame(columns=daykeys)
     df_presenze.loc[utente['nome'],:] = " "
     for day in utente['presenze']:
         df_presenze.loc[utente['nome'],day]="X"
     df_presenze.to_csv('presenzeUtenti.csv')
+    push_to_repo_branch('presenzeUtenti.csv', f'{GTIHUBUSER}/{GITHUBREPO}', 'master', GTIHUBUSER,GITHUBTOKEN)
     st.session_state['datiInseriti'] = True
 
-with open('./users.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+data = read_file_in_github(YAMLGITHUBPATH,GTIHUBUSER,GITHUBTOKEN)
+config = yaml.safe_load(data)
 
 authenticator = stauth.MyAuthenticate(
     config['credentials'],
@@ -84,7 +88,7 @@ if authentication_status==True:
     daykeys = ('Lun1','Mar1','Mer1','Gio1','Ven1','Lun2','Mar2','Mer2','Gio2','Ven2')
 
     try:
-        df_presenze=pd.read_csv('presenzeUtenti.csv',index_col=0)
+        df_presenze=read_csv_in_github(CSVGITHUBPATH,GTIHUBUSER,GITHUBTOKEN,index_col=0)
         df_thisweek=df_presenze.loc[:,'Lun1':'Ven1']
         df_nextweek=df_presenze.loc[:,'Lun2':'Ven2']
     except:
